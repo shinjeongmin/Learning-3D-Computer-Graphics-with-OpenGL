@@ -1,5 +1,5 @@
-#include <Windows.h> // 필수 헤더 파일들
-#include <mmsystem.h>
+#include <windows.h> // 필수 헤더 파일들
+#include <MMSystem.h>
 #include <glut.h>
 #include <gl/GL.h>
 #include <gl/GLU.h>
@@ -456,4 +456,146 @@ void Show() {
 	DrawR_Hand(-(R_Arm_y - 15), 1, 0, 0); // 오른손을 그림
 	glPopMatrix(); // 최초 저장 좌표계로 되돌아감.
 	glPushMatrix(); // 최초 위치 좌표계 다시 저장.
+
+	// 왼팔과 왼손
+	glTranslatef(0.0, -0.16, -0.04); // y축, z축으로 이동(왼팔 시작점)
+	glRotatef(40, 0, 0, 1); // z축을 기준으로 회전
+	DrawL_Arm((L_Arm_y + 30), 1, 0, 0); // 왼팔을 그림.
+	DrawL_Hand(-(L_Arm_y - 15), 1, 0, 0); // 왼손을 그림.
+	glPopMatrix(); // 최초 저장 좌표계로 되돌아감.
+	glPushMatrix(); // 최초 위치 좌표계 다시 저장.
+
+	// 왼족 다리와 왼쪽 종아리
+	glTranslatef(0.0, -0.45, -0.25); // y축, z축으로 이동(왼쪽 다리 시작점)
+	glRotatef(-90, 1, 0, 0); // x축을 기준으로 회전
+	DrawL_Legs(-30, 1, 0, 0); // 왼쪽 다리
+	DrawL_foot(10, 1, 0, 0); // 왼쪽 종아리
+	glPopMatrix(); // 최초 저장 좌표계로 되돌아감.
+	glPushMatrix(); // 최초 위치 좌표계 다시 저장.
+
+	// 오른쪽 다리와 오른쪽 종아리
+	glTranslatef(0.0, -0.5, -0.5); // y축, z축으로 이동(오른쪽 다리 시작점)
+	glRotatef(-90, 1, 0, 0); // x축을 기준으로 회전
+	DrawR_Legs(160, 1, 0, 0); // 오른쪽 다리
+	DrawR_foot(R_Leg_y, 1, 0, 0); // 오른쪽 종아리
+	glPopMatrix(); // 최초 저장 좌표계로 되돌아감.
+	glutSwapBuffers(); // 더블 버퍼링
+}
+
+// 로봇이 로켓을 발사하는 모습을 표현한 함수
+void Rocket() {
+	sndPlaySound(TEXT("C:\\sample2.wav"), SND_ASYNC | SND_NOSTOP);
+	glLoadIdentity();
+	L_Arm_x = -90; // 90도 각도로 팔을 앞으로 내밈.
+	R_Arm_x = -90;
+	R = 2 * abs(-sin(time2) * 0.2 - 0.2) + 0.2;
+	// 오른쪽 로켓 움직임 설정. 절댓값을 사용해 로켓이 앞쪽으로 나가게 설정.
+	// +0.2를 통해 로켓의 최초 위치 조절. 2*를 통해 로켓이 나가는 거리 조절. 
+	// sin() 함수로 주기적인 움직임 설정
+
+	R2 = 2 * abs(sin(time2) * 0.2 - 0.2) + 0.2; // 왼쪽 로켓 움직임 설정
+	R_Leg_y = abs(-sin(time) * 30 - 30); // 오른쪽 종아리 각도 조절
+	L_Leg_y = abs(sin(time) * 30 - 30); // 왼쪽 종아리 각도 조절
+	R_Leg_x = sin(time) * 60;
+	L_Leg_x = -R_Leg_x;
+
+	cyl = gluNewQuadric(); // 실린더 객체 생성
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // 초기화
+	glMatrixMode(GL_MODELVIEW); // 모드 설정
+
+	DrawGround(); // 지면을 그림
+	glLoadIdentity();
+	glPushMatrix();
+	glRotatef(-230.0, 0, 1, 0);
+
+	// 로켓을 쏠 때 상하좌우로 몸을 트는 모습을 설정
+	glRotatef(-abs(sin(time) * 8), 1, 0, 0); // x축을 기준으로 8도까지 틀어짐
+	glRotatef(sin(time) * 7, 0, 0, 1); // z축을 기준으로 7도까지 틀어짐
+	// 로켓을 쏘며 몸을 튕기는 모습을 표현
+	float i = 0;
+	i = abs(sin(time) * 0.08);
+	glTranslatef(0.0, i, 0);
+	glTranslatef(0.0, 0.5, 0.0);
+	DrawAndroid();
+	glutSwapBuffers();
+}
+
+// 키보드 콜백. w를 누르면 writeframe 모드로, s를 누르면 solid rendering 모드로, q를 누르면 종료
+void MyKeyboard(unsigned char KeyPressed, int x, int y) {
+	switch (KeyPressed) {
+	case 'w':
+		flag = 1;
+		break;
+	case 's':
+		flag = 0;
+		break;
+	case 'q':
+		key = 6;
+		break;
+	}
+}
+
+// 장면별로 키 값이 부여되며 이에 따라 노래가 연주됨. 노래 재생은 sndPlaySound() 함수를 사용하였으며
+// 이를 위해 별도의 음악 파일이 필요함. 경로 설정은 sndPlaySound(TEXT("음악 파일 경로"))
+void MyDisplay() {
+	if (key == RUN) { // 달릴때
+		Run();
+		glPopMatrix();
+	}
+	else if (key == JAP) { // 잽을 날릴 때
+		Jap();
+		glPopMatrix();
+	}
+	else if(key == ROCKET){ // 로켓을 발사할 때
+		Rocket();
+		glPopMatrix();
+	}
+	else if (key == YUNA) { // 피겨 동작을 취할 때
+		Show();
+		glPopMatrix();
+	}
+	else if (key == 5) { // 중지가 선택되었을 때
+		sndPlaySound(NULL, SND_ASYNC);
+	}
+	else if(key==EXIT) { // 종료가 선택되었을 때
+		ex();
+		glPopMatrix();
+	}
+}
+
+// 타이머 함수, 각 장면마다 상태 표현을 다르게 하기 위해 별도의 시간 변수를 사용함.
+void MyTimer(int Value) {
+	time = time + 0.1; // 달릴 때 쓰인 타이머 변수
+	time2 = time2 + 0.5; // 잽을 날릴 때 쓰인 타이머 변수
+	time3 = time3 + 0.01; // 로켓을 발사할 때 쓰인 타이머 변수
+	// 종료시 로봇이 뱅글뱅글 돌아가게 하는 데 쓰인 타이머 변수
+	time4 = time4 + 1.0; // 피겨 동작을 취할 때 쓰인 타이머 변수
+	glutPostRedisplay();
+	glutTimerFunc(40, MyTimer, 1);
+}
+
+// 마우스 오른쪽 클릭으로 메뉴를 선택할 때 실행되는 함수. 기본적으로 마우스 콜백을 이용해 장면이 변환 되도록 설정
+void MyMainMenu(int entryID) {
+	key = entryID;
+}
+
+int main(int argc, char** argv) {
+	glutInit(&argc, argv);
+	glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
+	glutInitWindowSize(800, 800);
+	glutInitWindowPosition(0, 0);
+	glutCreateWindow("Catch Me If You Can");
+	glInit();
+	GLint MyMainMenuID = glutCreateMenu(MyMainMenu);
+	glutAddMenuEntry("Run", 1); // 로봇이 달리는 동작 메뉴 추가
+	glutAddMenuEntry("Jap", 2); // 로봇이 잽을 날리는 동작 메뉴 추가
+	glutAddMenuEntry("Shoot", 3); // 로봇이 로켓 펀치를 발사하는 동작 메뉴 추가
+	glutAddMenuEntry("Skate", 4); // 로봇이 피켜 스케이팅을 하는 동작 메뉴 추가
+	glutAddMenuEntry("중지", 5); // 로봇이 하는 일을 멈추게 하는 메뉴 추가
+	glutAttachMenu(GLUT_RIGHT_BUTTON); // 마우스 오른쪽 버튼을 클릭하면 메뉴 팝업
+	glutKeyboardFunc(MyKeyboard);
+	glutTimerFunc(40, MyTimer, 1);
+	glutDisplayFunc(MyDisplay);
+	glutMainLoop();
+	return 0;
 }
