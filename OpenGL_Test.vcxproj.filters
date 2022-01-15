@@ -18,7 +18,13 @@
     <ClCompile Include="test.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="RoboMotion.cpp">
+    <ClCompile Include="RobotMotion.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="projection_by_viewport_split.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="prevent_distortion.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
