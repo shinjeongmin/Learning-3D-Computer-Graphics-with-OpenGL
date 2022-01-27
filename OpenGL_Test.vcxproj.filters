@@ -45,5 +45,11 @@
     <ClCompile Include="Fill_Polygon_Internal_By_Interpolation.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="GL_Anti-aliasing.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Comparison_Anti-aliasing.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
