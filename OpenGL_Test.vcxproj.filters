@@ -51,5 +51,11 @@
     <ClCompile Include="Comparison_Anti-aliasing.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="TwoLightSource.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="LightSourceAnimation.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
